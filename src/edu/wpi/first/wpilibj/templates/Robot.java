@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.image.*;
  * directory.
  */
 public class Robot extends SimpleRobot {
+    // Ports 
     // Jaguars
     private final int fLeftMotorJaguarPort = 1;
     private final int rLeftMotorJaguarPort = 2;
@@ -32,15 +33,19 @@ public class Robot extends SimpleRobot {
     private final int gunLeftVictorPort = 7;
     private final int gunRightVictorPort = 7;
     
-    
+    // Relays
     private final int turretTurnRelayPort = 1;
     private final int turretElevationRelayPort = 2;
     private final int conveyorTiltRelayPort = 3;
     private final int BridgingArmRelayPort = 4;
     
+    private final static boolean ON = true;
+    private final static boolean OFF = false;    
     
-    Joystick leftStick = new Joystick(1);
-    Joystick rightStick = new Joystick(2);
+    
+    // Hardware
+    Joystick driverStick = new Joystick(1);
+    Joystick gunnerStick = new Joystick(2);
     
     RobotDrive drive = new RobotDrive(fLeftMotorJaguarPort, rLeftMotorJaguarPort, 
             fRightMotorJaguarPort, rRightMotorJaguarPort);
@@ -59,6 +64,9 @@ public class Robot extends SimpleRobot {
     private ColorImage colorImage;
     private ParticleAnalysisReport s_particles[];
     private final ParticleComparer particleComparer = new ParticleComparer();
+    
+    // Speeds
+    private final static double CONVEYOR_BELT_SPEED = 1.0;
 
     public void robotInit(){
         camera = AxisCamera.getInstance();
@@ -75,14 +83,13 @@ public class Robot extends SimpleRobot {
     }
 
     public void operatorControl() {
-        while (isOperatorControl() && isEnabled()){
-            drive.arcadeDrive(rightStick); // drive with the joysticks
+        ballConveyor(ON);
+        while(isOperatorControl() && isEnabled()){
+            drive.arcadeDrive(driverStick); // drive with the joysticks
             Timer.delay(0.005);
-            if(leftStick.getButton(Joystick.ButtonType.kTrigger)){
-                alignTurret(1);
-            }
             
-            if(leftStick.getButton(Joystick.ButtonType.kTop)){
+            
+            if(gunnerStick.getButton(Joystick.ButtonType.kTop)){
                 if(ballConveyor.get() == 0){
                     ballConveyor.set(1.0);
                 }
@@ -91,6 +98,25 @@ public class Robot extends SimpleRobot {
                 }
             }
         }
+    }
+    
+    public void ballConveyor(boolean onOff) {
+        if(onOff) {
+            ballConveyor.set(CONVEYOR_BELT_SPEED);
+        }
+        else {
+            ballConveyor.set(0.0);
+        }
+    }
+    
+    public void interpretDriverJoystick() {
+        if(driverStick.getButton(Joystick.ButtonType.kNumButton)){
+            alignTurret(1);
+        }
+    }
+    
+    public void interpretGunnerJoystick() {
+        
     }
     
     private void alignTurret(int i) {
