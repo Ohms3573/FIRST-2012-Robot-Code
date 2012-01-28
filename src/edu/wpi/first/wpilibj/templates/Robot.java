@@ -100,6 +100,14 @@ public class Robot extends SimpleRobot {
         }
     }
     
+////////////////////////////////////////////////////////////////////////
+//  __  __     _              ___         _           _ _             //
+// |  \/  |___| |_ ___ _ _   / __|___ _ _| |_ _ _ ___| | |___ _ _ ___ //
+// | |\/| / _ \  _/ _ \ '_| | (__/ _ \ ' \  _| '_/ _ \ | / -_) '_(_-< //
+// |_|  |_\___/\__\___/_|    \___\___/_||_\__|_| \___/_|_\___|_| /__/ //
+//                                                                    //
+//////////////////////////////////////////////////////////////////////// 
+                                                                  
     public void ballConveyor(boolean onOff) {
         if(onOff) {
             ballConveyor.set(CONVEYOR_BELT_SPEED);
@@ -107,6 +115,10 @@ public class Robot extends SimpleRobot {
         else {
             ballConveyor.set(0.0);
         }
+    }
+
+    public void tiltConveyor() {
+        conveyorTilt
     }
     
     public void interpretDriverJoystick() {
@@ -230,6 +242,22 @@ public class Robot extends SimpleRobot {
 	// overloaded method because the comparitor uses Objects (not Particles)
         public int compare(Object o1, Object o2) {
             return compare((ParticleAnalysisReport) o1, (ParticleAnalysisReport) o2);
+        }
+    }
+
+    public class Claw extends Subsystem {
+        Victor motor;
+
+        public Claw() {
+            motor = new Victor(7);
+        }
+
+        public void initDefaultCommand() {
+            setDefaultCommand(new ClawDoNothing());
+        }
+
+        public void move(double speed) {
+            motor.set(speed);
         }
     }
 }
